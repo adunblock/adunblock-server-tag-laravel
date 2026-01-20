@@ -39,11 +39,11 @@ You can provide a custom closure to the `render_script` argument to render the s
 <head>
   <title>My Page</title>
   {!!
-    server_tag('https://your-remote-url.com/scripts', 300, function($jsFiles) {
-      $scripts = array_map(function ($src) {
-        return "<script src=\"{{$src}}\" defer></script>";
-      }, $jsFiles['js'] ?? []);
-      return implode("\n", $scripts);
+    server_tag('https://your-remote-url.com/scripts', 300, function($scripts) {
+      $scriptTags = array_map(function ($src) {
+        return "<script src=\"{$src}\" defer></script>";
+      }, $scripts);
+      return implode("\n", $scriptTags);
     })
   !!}
 </head>
