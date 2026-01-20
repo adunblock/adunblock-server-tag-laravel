@@ -11,19 +11,11 @@ if (!function_exists('server_tag')) {
                 $response = Http::get($remoteUrl);
                 $response->throw();
                 $data = $response->json();
-                // New format: API returns array directly instead of object with js property
-                if (is_array($data) && !isset($data['js'])) {
-                    // New format: array directly
-                    return ['js' => $data];
-                } elseif (is_array($data) && isset($data['js'])) {
-                    // Old format: object with js property (backward compatibility)
-                    return $data;
-                } else {
-                    return ['js' => []];
-                }
+                // Ensure we return an array
+                return is_array($data) ? $data : [];
             } catch (\Exception $e) {
                 // Log the error or handle it as needed
-                return ['js' => []];
+                return [];
             }
         });
 
@@ -33,7 +25,7 @@ if (!function_exists('server_tag')) {
 
         $scripts = array_map(function ($src) {
             return sprintf('<script src="%s" async></script>', htmlspecialchars($src, ENT_QUOTES, 'UTF-8'));
-        }, $jsFiles['js'] ?? []);
+        }, $jsFiles);
 
         return implode("\n", $scripts);
     }
