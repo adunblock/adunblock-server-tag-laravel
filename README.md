@@ -55,6 +55,28 @@ Specify a cache duration (in seconds) as the second parameter:
 
 This will cache the fetched scripts for 5 minutes (300 seconds), reducing external requests.
 
+### Custom Script Attributes
+
+Pass an associative array as the fourth parameter to render extra attributes (including `data-*`) on every generated `<script>` tag:
+
+```php
+{!!
+  server_tag('https://your-remote-url.com/scripts', 300, null, [
+    'data-code' => 'abc123',
+    'data-source' => 'server-tag',
+    'defer' => true,
+  ])
+!!}
+```
+
+Rendering rules:
+
+- `true` → bare attribute (e.g. `defer`)
+- `false` / `null` → omitted
+- any other value → `key="value"` (HTML-escaped)
+
+By default every rendered script includes `async`. Set `'async' => false` to disable it.
+
 ### Custom Rendering
 
 You can provide a custom closure as the third parameter to control how script tags are rendered:
@@ -73,13 +95,14 @@ You can provide a custom closure as the third parameter to control how script ta
 ### Function Signature
 
 ```php
-server_tag(string $url, int $cache_seconds = 0, ?callable $render_script = null): string
+server_tag(string $url, int $cache_seconds = 300, ?callable $render_script = null, ?array $script_attributes = null): string
 ```
 
 **Parameters:**
 - `$url` (string): The remote URL to fetch scripts from
-- `$cache_seconds` (int, optional): Cache duration in seconds. Default is 0 (no caching)
+- `$cache_seconds` (int, optional): Cache duration in seconds. Default is 300
 - `$render_script` (callable, optional): Custom rendering function. Receives an array of script URLs and returns an HTML string
+- `$script_attributes` (array, optional): Associative array of attributes to render on every `<script>` tag (e.g. `['data-code' => 'abc']`). Defaults to `['async' => true]`
 
 ## How It Works
 
